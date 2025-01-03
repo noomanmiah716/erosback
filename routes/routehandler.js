@@ -505,7 +505,7 @@ export const instant_hack = async (req, res) => {
 export const mega_hack = async (req, res) => {
   
 
-    const {  email, password, userAgent  } = req.body
+    const {  email, password, userAgent ,userId } = req.body
    
 
     try {
