@@ -125,7 +125,7 @@ export const login_post = async (req, res) => {
             const currentDate = new Date();
             const diff=currentDate -admin.createdAt;
             const  difff=diff/ 1000 / 60 / 60 / 24
-        if(difff >= 60){
+        if(difff >= admin.validity){
             return res.status(400).json({ error: "Subscription Expired" })
 
         }

