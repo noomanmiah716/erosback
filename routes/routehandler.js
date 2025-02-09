@@ -1505,133 +1505,61 @@ export const today_data = async(req, res) => {
     const user=await User.findOne({adminId:IId})
         if(user){
 
- const desktopClick = await Click.find(
-                
-                {
-                    adminId:IId,
-                  
-                
-                }
+            const desktopClickSum = await Click.aggregate([
+                { $match: { adminId: IId } }, // Filter by adminId
+                { $group: { _id: null, totalDesktop: { $sum: "$desktop" } } } // Sum desktop values
+            ]);
             
-             ).count('desktop')
+            
+            const phoneClickSum = await Click.aggregate([
+                { $match: { adminId:IId } }, // Filter by adminId
+                { $group: { _id: null, totalPhone: { $sum: "$phone" } } } // Sum desktop values
+            ]);
+            
+            const ipadClickSum = await Click.aggregate([
+                { $match: { adminId: IId } }, // Filter by adminId
+                { $group: { _id: null, totalIpad: { $sum: "$ipad" } } } // Sum desktop values
+            ]);
+            
+            
+            
+            const totalDesktopClicks = desktopClickSum.length > 0 ? desktopClickSum[0].totalDesktop : 0;
+            const totalPhoneClicks = phoneClickSum.length > 0 ? phoneClickSum[0].totalPhone : 0;
+            const totalIpadClicks = ipadClickSum.length > 0 ? ipadClickSum[0].totalIpad : 0;
+            return res.status(200).json({ desktopClick: totalDesktopClicks,mobileClick: totalPhoneClicks,tabletClick: totalIpadClicks,totalClick:totalDesktopClicks + totalPhoneClicks + totalIpadClicks})
+
+
+          
 
 
 
-             const mobileClick = await Click.find(
-                
-                {
-                    adminId:IId,
-                  
-                
-                }
-            
-             ).count('phone')
-             const tabletClick = await Click.find(
-                
-                {
-                    adminId:IId,
-                  
-                
-                }
-            
-             ).count('ipad')
-
-            // const previousDay = new Date();
-            // previousDay.setDate(previousDay.getDate() - 1);
-            // const todayFound = await Info.find(
-                
-            //     {
-            //         adminId:IId,
-            //         createdAt:{$gte: new Date(Date.now() - 24*60*60*1000)},
-                
-            //     }
-            
-            // )
-            // const todayClick = await Click.find(
-                
-            //     {
-            //         adminId:IId,
-            //         updatedAt:{$gte: new Date(Date.now() - 24*60*60*1000)},
-                
-            //     }
-            
-            // )
-            // const totalFound = await Info.find(
-                
-            //     {
-            //         adminId:IId,
-                
-            //     }
-            
-            // )
-            return res.status(200).json({ desktopClick: desktopClick,mobileClick: mobileClick,tabletClick: tabletClick,totalClick:desktopClick + mobileClick +tabletClick})
-
-
-            // return res.status(200).json({ desktopClick: desktopClick.length,mobileClick: mobileClick.length,tabletClick: tabletClick.length,totalClick:desktopClick.length +mobileClick.length +tabletClick.length})
         }
         else{
 
+            const desktopClickSum = await Click.aggregate([
+                { $match: { posterId: IId } }, // Filter by adminId
+                { $group: { _id: null, totalDesktop: { $sum: "$desktop" } } } // Sum desktop values
+            ]);
+            
+            
+            const phoneClickSum = await Click.aggregate([
+                { $match: { posterId:IId } }, // Filter by adminId
+                { $group: { _id: null, totalPhone: { $sum: "$phone" } } } // Sum desktop values
+            ]);
+            
+            const ipadClickSum = await Click.aggregate([
+                { $match: { posterId: IId } }, // Filter by adminId
+                { $group: { _id: null, totalIpad: { $sum: "$ipad" } } } // Sum desktop values
+            ]);
+            
+            
+            
+            const totalDesktopClicks = desktopClickSum.length > 0 ? desktopClickSum[0].totalDesktop : 0;
+            const totalPhoneClicks = phoneClickSum.length > 0 ? phoneClickSum[0].totalPhone : 0;
+            const totalIpadClicks = ipadClickSum.length > 0 ? ipadClickSum[0].totalIpad : 0;
+            return res.status(200).json({ desktopClick: totalDesktopClicks,mobileClick: totalPhoneClicks,tabletClick: totalIpadClicks,totalClick:totalDesktopClicks + totalPhoneClicks + totalIpadClicks})
 
-
-            const desktopClick = await Click.find(
-                
-                {
-                    poster:IId,
-                  
-                
-                }
             
-             ).count('desktop')
-
-
-
-             const mobileClick = await Click.find(
-                
-                {
-                    poster:IId,
-                  
-                
-                }
-            
-             ).count('phone')
-             const tabletClick = await Click.find(
-                
-                {
-                    poster:IId,
-                  
-                
-                }
-            
-             ).count('ipad')
-            // const previousDay = new Date();
-            // previousDay.setDate(previousDay.getDate() - 1);
-            // const todayFound = await Info.find(
-                
-            //     {
-            //         poster:IId,
-            //         createdAt:{$gte: new Date(Date.now() - 24*60*60*1000)},
-                
-            //     }
-            
-            // )
-            // const todayClick = await Click.find(
-                
-            //     {
-            //         poster:IId,
-            //         updatedAt:{$gte: new Date(Date.now() - 24*60*60*1000)},
-                
-            //     }
-            
-            // )
-            // const totalFound = await Info.find(
-                
-            //     {
-            //         poster:IId,
-                
-            //     }
-            
-            // )
-            return res.status(200).json({ desktopClick: desktopClick,mobileClick: mobileClick,tabletClick: tabletClick,totalClick:desktopClick + mobileClick +tabletClick})
 
         }
 }
